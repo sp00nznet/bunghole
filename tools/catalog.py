@@ -15,6 +15,7 @@ _HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.join(os.environ.get('PCRECOMP', os.path.join(_HERE, '..', 'tools')), 'tools')
 GAME = os.path.join(_HERE, 'game', 'disc')
 
+os.makedirs(os.path.join(_HERE, 'work'), exist_ok=True)     # gitignored, so absent in a fresh copy
 for exe, tag in [('GOLF.EXE', 'golf'), ('00170001.DLL', 'game')]:
     out = os.path.join(_HERE, 'work', 'functions_%s.json' % tag)
     subprocess.run([sys.executable, os.path.join(TOOLS, 'disasm', 'disasm32.py'),
