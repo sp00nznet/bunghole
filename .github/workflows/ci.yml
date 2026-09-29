@@ -1,0 +1,28 @@
+# What CI can check without the game (which is never in the repo): the Python
+# tools compile, the conformance harness takes its no-corpus path, and softdd,
+# which needs only the Windows SDK, compiles for x86 with warnings as errors.
+# The host itself needs pcrecomp#7 and #16-#20; it joins CI when they merge.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python compiles
+        run: python -m py_compile run_lift.py tools/catalog.py tools/conformance.py tools/disc.py
+      - name: Conformance (skips without the game)
+        run: python tools/conformance.py
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+      - name: softdd compiles (x86, /W3 /WX)
+        run: cl /nologo /c /W3 /WX /D_CRT_SECURE_NO_WARNINGS /Isrc/runtime src/runtime/softdd.c

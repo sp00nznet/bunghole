@@ -1,0 +1,64 @@
+# Build artifacts
+build/
+build-*/
+out/
+cmake-build-*/
+*.obj
+*.o
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.a
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+CMakeSettings.json
+CMakeUserPresets.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- Original game files: NOT redistributed in this repo ---
+# MTV's Beavis and Butt-Head: Bunghole in One (c) 1998 GT Interactive / The
+# Illusions Gaming Company / MTV Networks. In copyright. Bring your own CD;
+# Setup.cmd copies its files into game\disc and everything derived from them
+# lands in work\.
+game/
+disc/
+*.iso
+*.bin
+*.img
+*.cue
+*.ccd
+*.sub
+*.exe
+*.EXE
+*.dll
+*.DLL
+*.zip
+*.7z
+*.rar
+*.cab
+
+# Derived from the game binaries: the function catalogs, the toolkit pin, the
+# lift statistics, run logs and recordings. The generated C is recompiler
+# output and is never committed (REPO_RULES section 3).
+work/
+src/recomp/gen/
+*.i64
+*.idb
+*.mp4
+
+setup.log
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
