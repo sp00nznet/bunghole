@@ -1,5 +1,7 @@
 # Bunghole in One — Static Recompilation
 
+![Hole 1, recompiled: Beavis lines up a putt and the ball rolls past the TV](docs/img/hero.gif)
+
 Static recompilation of **MTV's Beavis and Butt-Head: Bunghole in One**
 (The Illusions Gaming Company / GT Interactive, 1998), a Windows 95 mini-golf
 game, from its shipping Win32 executables to native C.
@@ -78,7 +80,7 @@ C++*, and the pcrecomp toolkit cloned **beside** this repository as `tools`:
 ```
 some-folder\
   tools\                        <- git clone https://github.com/sp00nznet/pcrecomp tools
-  beavisandbuttheadbunghole\    <- this repository
+  bunghole\                     <- git clone https://github.com/sp00nznet/bunghole
 ```
 
 1. Python packages:
