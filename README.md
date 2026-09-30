@@ -10,7 +10,7 @@ Built on the [pcrecomp](https://github.com/sp00nznet/pcrecomp) toolchain and
 following its shared house style (layout, CLI, conformance harness, headless
 mode).
 
-## Status: **v0.1.0-dev, alpha. Plays: menus, character select, hole 1, a putt that rolls. Only the first putt of the first hole has been checked.**
+## Status: **v0.1.0-dev, alpha. Boots, plays the menus and the first hole's fly-through on pcrecomp main; the putt that rolled on an earlier toolkit stalls on main ([#1](https://github.com/sp00nznet/bunghole/issues/1)).**
 
 | Stage | State |
 |---|---|
@@ -21,14 +21,13 @@ mode).
 | DirectDraw | `softdd`: a software DirectDraw in the host. The game never touches the real display mode ([host.md](docs/host.md)) |
 | Intro videos (DirectShow) | **play**: native DirectShow decodes into softdd surfaces |
 | Main menu | **reached**, headless, about 70 s in (the intros run in real time) |
-| Gameplay | **hole 1 plays**: player count, character select, the fly-through, the aim line, a putt, the ball rolling with the camera following. Nothing after the first putt has been checked ([ROADMAP.md](ROADMAP.md)) |
+| Gameplay | player count, character select, hole 1's fly-through. On an earlier toolkit a putt rolled (the GIF above). On pcrecomp main the camera stays on the fly-through's last waypoint and the putt does nothing: a correct `memcpy` exposes a latent bug ([#1](https://github.com/sp00nznet/bunghole/issues/1)) |
 | Headless mode | `--headless --record out.mp4`, with `--click` / `--drag` for scripted input |
 | Windowed mode | runs (1,900 frames on an offstage virtual monitor); no picture of the window yet |
-| Conformance harness | **18/18 milestones** (12 boot, 6 play including "the ball moved": 76% of the screen changes after the putt), 0 lift errors ([tools/conformance.py](tools/conformance.py)) |
+| Conformance harness | 18 milestones (12 boot, 6 play). On pcrecomp main: **17/18**, "the ball moved" failing ([#1](https://github.com/sp00nznet/bunghole/issues/1)); the committed baseline (18/18) is from the earlier toolkit. 0 lift errors ([tools/conformance.py](tools/conformance.py)) |
 
-The six toolkit changes this needed are open pcrecomp PRs, #16 to #20 on top
-of #7 ([docs/toolkit.md](docs/toolkit.md)). Until they merge, build against a
-pcrecomp checkout that has them.
+Every toolkit change this needed is merged into pcrecomp main (#7, #16 to #21;
+[docs/toolkit.md](docs/toolkit.md)), so a plain clone of pcrecomp builds it.
 
 ## Screenshots
 
@@ -157,6 +156,7 @@ build\bunghole.exe --run --headless --record putt.mp4 --frames 6800 ^
 | `--click X,Y@F` | at frame F, click at (X,Y) in the game's 640x480 |
 | `--drag X,Y,DX,DY@F` | at frame F, press at (X,Y), drag by (DX,DY), release: a putt goes the opposite way |
 | `--call VA ARGS...` | run one lifted function on the given dwords and print eax and st(0); no boot |
+| `--fill ADDR`, `--dump ADDR LEN` | with `--call`: write bytes 0..255 at ADDR first, print LEN bytes at ADDR after (how `memcpy` was checked against the original, #1) |
 | `--game DIR` | the CD's files (default `game\disc`) |
 | `--watchdog S` | stop after S seconds and say where the game was |
 | `--native-trace`, `--callbacks` | one line per call into Windows, or back from it |

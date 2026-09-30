@@ -38,7 +38,12 @@ versions follow [SemVer](https://semver.org/).
   just after it).
 
 ### Toolkit
-- Needs pcrecomp#7 (native32) and #16 to #20
-  ([docs/toolkit.md](docs/toolkit.md)): native32's stack headroom (#16) and
-  guest modules (#17), disasm32 export seeds (#18) and callees over guesses
-  (#19), and flags across tail jumps (#20, the frozen ball).
+- Builds against pcrecomp main: #7 (native32), #16 (stack headroom), #17
+  (guest modules), #18 (export seeds), #19 and #21 (callees over guesses),
+  #20 (flags across tail jumps, the frozen ball) are all merged
+  ([docs/toolkit.md](docs/toolkit.md)).
+
+### Known issues
+- On pcrecomp main the first hole stalls after its fly-through, and the putt
+  does nothing: the now-correct `memcpy` lift exposes a latent bug (#1).
+  Conformance on main is 17/18.

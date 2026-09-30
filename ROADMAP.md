@@ -2,7 +2,12 @@
 
 ## Next
 
-- **Play a round.** Hole 1 and one putt work, headless. Next: sink it, the
+- **The fly-through stall on pcrecomp main** ([#1](https://github.com/sp00nznet/bunghole/issues/1)).
+  A correct `memcpy` lift exposes a latent bug that the old, truncating one
+  masked. First: the backward overlapping copies near the end of the
+  fly-through, and what reads the bytes they shift.
+- **Play a round.** Hole 1 and one putt worked, headless, on the earlier
+  toolkit (#1 first). Next: sink it, the
   scorecard, the next holes, 2-4 players, the traps. Each is a scripted run
   (`--click`, `--drag`) and a conformance milestone once it works.
 - **See the windowed path.** It runs to 1,900 frames on an offstage virtual
@@ -15,7 +20,6 @@
   2,000 frames. A faster or slower machine that presents at a different rate
   would click early or late; a "wait for this screen" step (a hash of a
   screen region) would remove the guess.
-- **Merge the toolkit PRs** (#16 to #20) so a plain pcrecomp clone builds this.
 
 ## Deferred
 

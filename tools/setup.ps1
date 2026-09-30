@@ -98,7 +98,7 @@ $need = @(
   @('#7 and #17 (native32, guest modules)', 'runtime\native32\native32.c', 'native32_export'),
   @('#16 (native32 stack headroom)', 'runtime\native32\native32.c', 'BRIDGE_SLOTS \* 4 - 64'),
   @('#18 (disasm32 export seeds)', 'tools\disasm\disasm32.py', 'exports seeded'),
-  @('#19 (disasm32 callees beat guesses)', 'tools\disasm\disasm32.py', 'called=called'),
+  @('#19 and #21 (disasm32 callees and guesses)', 'tools\disasm\disasm32.py', 'callers=callers, weak=weak'),
   @('#20 (flags across tail jumps)', 'runtime\recomp32\recomp_types.h', 'RECOMP_ENTER\(va\) \(g_cur_func = \(va\), RECOMP_FLAGS_IN'))
 $missing = @($need | Where-Object {
   $f = Join-Path $Toolkit $_[1]

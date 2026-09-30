@@ -1,7 +1,8 @@
 # What CI can check without the game (which is never in the repo): the Python
-# tools compile, the conformance harness takes its no-corpus path, and softdd,
-# which needs only the Windows SDK, compiles for x86 with warnings as errors.
-# The host itself needs pcrecomp#7 and #16-#20; it joins CI when they merge.
+# tools compile, the conformance harness takes its no-corpus path, and the host
+# (host.c against pcrecomp main's native32, and softdd) compiles for x86 with
+# warnings as errors. Linking needs the generated C, which only a local run
+# of the pipeline on your own CD produces.
 name: ci
 on:
   push:
@@ -14,6 +15,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: sp00nznet/pcrecomp
+          path: pcrecomp
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -24,5 +29,5 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x86
-      - name: softdd compiles (x86, /W3 /WX)
-        run: cl /nologo /c /W3 /WX /D_CRT_SECURE_NO_WARNINGS /Isrc/runtime src/runtime/softdd.c
+      - name: host and softdd compile (x86, /W3 /WX)
+        run: cl /nologo /c /W3 /WX /D_CRT_SECURE_NO_WARNINGS /Isrc/runtime /Ipcrecomp/runtime/native32 /Ipcrecomp/runtime/recomp32 src/runtime/host.c src/runtime/softdd.c

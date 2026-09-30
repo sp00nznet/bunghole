@@ -1,19 +1,32 @@
 # The toolkit changes this game needed
 
 Everything generic went to [pcrecomp](https://github.com/sp00nznet/pcrecomp)
-as its own PR (REPO_RULES section 11). Until they merge, build against a
-checkout that has all of them, on top of the open PRs they need:
+as its own PR (REPO_RULES section 11). All of them are merged into main:
 
 | PR | What | How it showed up here |
 |---|---|---|
-| [#7](https://github.com/sp00nznet/pcrecomp/pull/7) | `runtime/native32`: the 32-bit host (not mine; The Movies' and gunman's) | the host is built on it |
+| [#7](https://github.com/sp00nznet/pcrecomp/pull/7) | `runtime/native32`: the 32-bit host (from The Movies and gunman) | the host is built on it |
 | [#16](https://github.com/sp00nznet/pcrecomp/pull/16) | native32: the guest stack leaves room for the bridge's 24-slot copy | `native32_selftest` crashed on 9 of 20 runs before anything of this game ran |
 | [#17](https://github.com/sp00nznet/pcrecomp/pull/17) | native32: guest modules bind to each other's exports | the DLL's 93 imports from `Golf.exe` had nowhere to point |
 | [#18](https://github.com/sp00nznet/pcrecomp/pull/18) | disasm32 seeds exports | `specmainModuleInit` was not in the catalog: `ICALL: unresolved VA 0x1000F6A0` |
-| [#19](https://github.com/sp00nznet/pcrecomp/pull/19) | disasm32: a callee is never dropped for a pointer-shaped guess | the `jmp [DirectInputCreateA]` thunk was dropped: `ICALL: unresolved VA 0x0041C0D8` |
+| [#19](https://github.com/sp00nznet/pcrecomp/pull/19) | disasm32: drop the pointer-shaped guess that straddles a called entry (on top of #14, which keeps the callee) | the `jmp [DirectInputCreateA]` thunk was dropped: `ICALL: unresolved VA 0x0041C0D8` |
 | [#20](https://github.com/sp00nznet/pcrecomp/pull/20) | recomp32: flags cross calls and tail jumps | the putt counted but the ball never moved |
+| [#21](https://github.com/sp00nznet/pcrecomp/pull/21) | disasm32: a call target is kept only while its caller survives | #14 kept a garbage entry inside the game DLL's `0x10001000`, cutting that handler short |
 
 `Setup.cmd` checks the toolkit for each of these and names the ones missing.
+
+## The memcpy that was too good (open: [#1](https://github.com/sp00nznet/bunghole/issues/1))
+
+Merging everything changed exactly three lifted functions: the CRT's
+`memcpy`/`memmove` in each image. pcrecomp #11 now lifts the arms of
+`jmp [ecx*4 + table]` that sit *below* the table base, which the unrolled
+backward copy uses. The old lift silently skipped the tail of backward
+overlapping copies of 15-31 bytes (23 of 144 overlapping cases wrong), and
+running the original bytes under Unicorn gives exactly the new lift's results.
+So main's `memcpy` is right. With it, though, hole 1 stalls at the end of its
+fly-through. Only putting the old lift back in all three functions restores
+the putt; any one of them alone does not. Something downstream depends on the
+bytes the broken copy left behind, and that is the bug to find next.
 
 ## The frozen ball (#20)
 

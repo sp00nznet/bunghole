@@ -31,7 +31,7 @@ extern const uint32_t bh_exe_entry_va, bh_dll_entry_va;     /* recomp_dispatch.c
 
 static DWORD g_watchdog_s;
 static int   g_headless;
-static uint32_t g_probe_va, g_probe_args[8];
+static uint32_t g_probe_va, g_probe_args[8], g_dump_va, g_dump_len, g_fill_va;
 static int   g_probe_n;
 static char  g_game[MAX_PATH];           /* the CD's file tree, with a trailing '\' */
 static char  g_guest_exe[MAX_PATH], g_guest_cmdline[MAX_PATH + 3];
@@ -449,6 +449,12 @@ int main(int argc, char** argv) {
             while (i + 1 < argc && argv[i + 1][0] != '-' && g_probe_n < 8)
                 g_probe_args[g_probe_n++] = strtoul(argv[++i], NULL, 0);
         }
+        else if (!strcmp(argv[i], "--dump") && i + 2 < argc) {
+            /* after --call: print LEN bytes at ADDR; --fill ADDR: 256 bytes 0..255 before it */
+            g_dump_va = strtoul(argv[++i], NULL, 0);
+            g_dump_len = strtoul(argv[++i], NULL, 0);
+        }
+        else if (!strcmp(argv[i], "--fill") && i + 1 < argc) g_fill_va = strtoul(argv[++i], NULL, 0);
         else if (!strcmp(argv[i], "--native-trace")) native32_trace_native = 1;
         else if (!strcmp(argv[i], "--callbacks")) native32_trace_callbacks = 1;
         else {
@@ -481,10 +487,13 @@ int main(int argc, char** argv) {
         /* --call: run one lifted function on the dwords given and show what it
          * returned, without booting the game (a CRT math routine, say). */
         int top = g_fp_top;
+        for (uint32_t i = 0; g_fill_va && i < 256; i++) MEM8(g_fill_va + i) = (uint8_t)i;
         native32_call_guest(g_probe_va, g_probe_n, g_probe_args);
         printf("  sub_%08X -> eax=%08X edx=%08X", g_probe_va, g_eax, g_edx);
         if (g_fp_top == top + 1) printf(" st(0)=%.17g", g_st[0]);
         printf("\n");
+        for (uint32_t i = 0; i < g_dump_len; i++)
+            printf("%02X%s", MEM8(g_dump_va + i), (i + 1) % 32 ? "" : "\n");
         return 0;
     }
     if (!run) {
