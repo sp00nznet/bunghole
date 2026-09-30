@@ -24,6 +24,8 @@ versions follow [SemVer](https://semver.org/).
   health, against `conformance.json`. First baseline: 12/12, 0 lift errors,
   0 unresolvable tail calls.
 - `Setup.cmd`: the one-click route, running the same steps as the README.
+- `CONTRIBUTING.md` and `SECURITY.md` ahead of going public; a hero GIF of
+  the first putt at the top of the README.
 - Boots through the intro videos (MTV, GT Interactive, the disclaimer, the
   title) to the main menu, recompiled.
 - Plays hole 1: the player count, character select, the fly-through, the aim
